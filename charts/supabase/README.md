@@ -49,14 +49,18 @@ demo-supabase-storage-xxxxxxxxxx-xxxxx    1/1     Running   0             47s
 ### Access with Minikube
 
 Assuming that you have enabled Minikube ingress addon, note down the Minikube IP address:
+
 ```shell
 minikube ip
 ```
+
 Then, add the IP into your `/etc/hosts` file:
+
 ```bash
 # This will redirect request for example.com to the minikube IP
 <minikube-ip> example.com
 ```
+
 Open http://example.com in your browser.
 
 ### Uninstall
@@ -152,28 +156,33 @@ secret:
 Supabase storage supports the use of S3 object-storage. To enable S3 for Supabase storage:
 
 1. Set S3 key ID and access key:
-  ```yaml
-   secret:
-    s3:
-      keyId: your-s3-key-id
-      accessKey: your-s3-access-key
-  ```
+
+```yaml
+secret:
+  s3:
+    keyId: your-s3-key-id
+    accessKey: your-s3-access-key
+```
+
 2. Set storage S3 environment variables:
-  ```yaml
-  storage:
-    environment:
-      # Set S3 endpoint if using external object-storage
-      # GLOBAL_S3_ENDPOINT: http://minio:9000
-      STORAGE_BACKEND: s3
-      GLOBAL_S3_PROTOCOL: http
-      GLOBAL_S3_FORCE_PATH_STYLE: true
-      AWS_DEFAULT_REGION: stub
-  ```
+
+```yaml
+storage:
+  environment:
+    # Set S3 endpoint if using external object-storage
+    # GLOBAL_S3_ENDPOINT: http://minio:9000
+    STORAGE_BACKEND: s3
+    GLOBAL_S3_PROTOCOL: http
+    GLOBAL_S3_FORCE_PATH_STYLE: true
+    AWS_DEFAULT_REGION: stub
+```
+
 3. (Optional) Enable internal minio deployment
-  ```yaml
-  minio:
-    enabled: true
-  ```
+
+```yaml
+minio:
+  enabled: true
+```
 
 ## How to use in Production
 
@@ -238,7 +247,7 @@ Depending on your Kubernetes version you might want to fill the `className` prop
 ```yml
 kong:
   ingress:
-    enabled: 'true'
+    enabled: "true"
     className: "nginx"
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
@@ -269,10 +278,10 @@ docker run -it \
 
 #### `0.0.x` to `0.1.x`
 
-* `supabase/postgres` is updated from `14.1` to `15.1`, which warrants backing up all your data before proceeding to update to the next major version.
-* Intialization scripts for `supabase/postgres` has been reworked and matched closely to the [Docker Compose](https://github.com/supabase/supabase/blob/master/docker/docker-compose.yml) version. Further tweaks to the scripts are needed to ensure backward-compatibility.
-* Migration scripts are now exposed at `db.config`, which will be mounted at `/docker-entrypoint-initdb.d/migrations/`. Simply copy your migration files from your local project's `supabase/migration` and populate the `db.config`.
-* Ingress are now limited to `kong` & `db` services. This is by design to limit entry to the stack through secure `kong` service.
-* `kong.yaml` has been modified to follow [Docker kong.yaml](https://github.com/supabase/supabase/blob/master/docker/volumes/api/kong.yml) template.
-* `supabase/storage` does not comes with pre-populated `/var/lib/storage`, therefore an `emptyDir` will be created if persistence is disabled. This might be incompatible with previous version if the persistent storage location is set to location other than specified above.
-* `supabase/vector` requires read access to the `/var/log/pods` directory. When run in a Kubernetes cluster this can be provided with a [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath) volume.
+- `supabase/postgres` is updated from `14.1` to `15.1`, which warrants backing up all your data before proceeding to update to the next major version.
+- Intialization scripts for `supabase/postgres` has been reworked and matched closely to the [Docker Compose](https://github.com/supabase/supabase/blob/master/docker/docker-compose.yml) version. Further tweaks to the scripts are needed to ensure backward-compatibility.
+- Migration scripts are now exposed at `db.config`, which will be mounted at `/docker-entrypoint-initdb.d/migrations/`. Simply copy your migration files from your local project's `supabase/migration` and populate the `db.config`.
+- Ingress are now limited to `kong` & `db` services. This is by design to limit entry to the stack through secure `kong` service.
+- `kong.yaml` has been modified to follow [Docker kong.yaml](https://github.com/supabase/supabase/blob/master/docker/volumes/api/kong.yml) template.
+- `supabase/storage` does not comes with pre-populated `/var/lib/storage`, therefore an `emptyDir` will be created if persistence is disabled. This might be incompatible with previous version if the persistent storage location is set to location other than specified above.
+- `supabase/vector` requires read access to the `/var/log/pods` directory. When run in a Kubernetes cluster this can be provided with a [hostPath](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath) volume.

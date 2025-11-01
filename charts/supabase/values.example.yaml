@@ -111,7 +111,8 @@ kong:
     className: "nginx"
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
-    tls: []
+    tls:
+      []
       # - secretName: example-ingress-tls
       #   hosts:
       #     - example.com
