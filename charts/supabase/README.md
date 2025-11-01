@@ -21,8 +21,11 @@ git clone https://github.com/supabase-community/supabase-kubernetes
 # Switch to charts directory
 cd supabase-kubernetes/charts/supabase/
 
-# Install the chart
+# Install the chart (defaults to 'default' namespace)
 helm install demo -f values.example.yaml .
+
+# Or install to a custom namespace
+helm install demo -f values.example.yaml . --set namespace=supabase-namespace
 ```
 
 The first deployment can take some time to complete (especially auth service). You can view the status of the pods using:
@@ -70,6 +73,7 @@ kubectl delete pvc demo-supabase-storage-pvc
 
 You should consider to adjust the following values in `values.yaml`:
 
+- `namespace`: Custom namespace for all resources (defaults to release namespace)
 - `RELEASE_NAME`: Name used for helm release
 - `STUDIO.EXAMPLE.COM` URL to Studio
 

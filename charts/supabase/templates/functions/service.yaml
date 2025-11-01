@@ -3,6 +3,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: {{ include "supabase.functions.fullname" . }}
+  namespace: {{ include "supabase.namespace" . }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
 spec:
@@ -12,6 +13,7 @@ spec:
       targetPort: 9000
       protocol: TCP
       name: http
+  namespace: {{ include "supabase.namespace" . }}
   selector:
     {{- include "supabase.functions.selectorLabels" . | nindent 4 }}
 {{- end }}

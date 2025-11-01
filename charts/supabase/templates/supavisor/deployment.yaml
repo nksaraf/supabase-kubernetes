@@ -1,34 +1,34 @@
-{{- if .Values.auth.enabled -}}
+{{- if .Values.supavisor.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "supabase.auth.fullname" . }}
+  name: {{ include "supabase.supavisor.fullname" . }}
   namespace: {{ include "supabase.namespace" . }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
 spec:
-  {{- if not .Values.auth.autoscaling.enabled }}
-  replicas: {{ .Values.auth.replicaCount }}
+  {{- if not .Values.supavisor.autoscaling.enabled }}
+  replicas: {{ .Values.supavisor.replicaCount }}
   {{- end }}
   selector:
     matchLabels:
-      {{- include "supabase.auth.selectorLabels" . | nindent 6 }}
+      {{- include "supabase.supavisor.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-      {{- with .Values.auth.podAnnotations }}
+      {{- with .Values.supavisor.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        {{- include "supabase.auth.selectorLabels" . | nindent 8 }}
+        {{- include "supabase.supavisor.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.auth.imagePullSecrets }}
+      {{- with .Values.supavisor.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "supabase.auth.serviceAccountName" . }}
+      serviceAccountName: {{ include "supabase.supavisor.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.auth.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.supavisor.podSecurityContext | nindent 8 }}
       initContainers:
         - name: init-db
           image: postgres:15-alpine
@@ -38,7 +38,7 @@ spec:
               {{- if .Values.db.enabled }}
               value: {{ include "supabase.db.fullname" . | quote }}
               {{- else }}
-              value: {{ .Values.auth.environment.DB_HOST | quote }}
+              value: {{ .Values.db.environment.DB_HOST | quote }}
               {{- end }}
             - name: DB_USER
               valueFrom:
@@ -51,7 +51,7 @@ spec:
                   key: username
                   {{- end }}
             - name: DB_PORT
-              value: {{ .Values.auth.environment.DB_PORT | quote }}
+              value: {{ .Values.supavisor.environment.POSTGRES_PORT | quote }}
           command: ["/bin/sh", "-c"]
           args:
             - |
@@ -61,21 +61,25 @@ spec:
               done
             - echo "Database is ready"
       containers:
-        - name: {{ include "supabase.auth.name" $ }}
+        - name: {{ include "supabase.supavisor.name" $ }}
           securityContext:
-            {{- toYaml .Values.auth.securityContext | nindent 12 }}
-          image: "{{ .Values.auth.image.repository }}:{{ .Values.auth.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+            {{- toYaml .Values.supavisor.securityContext | nindent 12 }}
+          image: "{{ .Values.supavisor.image.repository }}:{{ .Values.supavisor.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.supavisor.image.pullPolicy }}
+          command:
+            - /bin/sh
+            - -c
+            - /app/bin/migrate && /app/bin/server
           env:
-            {{- range $key, $value := .Values.auth.environment }}
+            {{- range $key, $value := .Values.supavisor.environment }}
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
             {{- if .Values.db.enabled }}
-            - name: DB_HOST
+            - name: POSTGRES_HOST
               value: {{ include "supabase.db.fullname" . }}
             {{- end }}
-            - name: DB_PASSWORD
+            - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.secret.db.secretRef }}
@@ -85,17 +89,7 @@ spec:
                   name: {{ include "supabase.secret.db" . }}
                   key: password
                   {{- end }}
-            - name: DB_PASSWORD_ENC
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: password_encoded
-                  {{- end }}
-            - name: DB_NAME
+            - name: POSTGRES_DB
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.secret.db.secretRef }}
@@ -105,11 +99,9 @@ spec:
                   name: {{ include "supabase.secret.db" . }}
                   key: database
                   {{- end }}
-            - name: GOTRUE_DB_DATABASE_URL
-              value: $(DB_DRIVER)://$(DB_USER):$(DB_PASSWORD_ENC)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?search_path=auth&sslmode=$(DB_SSL)
-            - name: GOTRUE_DB_DRIVER
-              value: $(DB_DRIVER)
-            - name: GOTRUE_JWT_SECRET
+            - name: DATABASE_URL
+              value: postgresql://supabase_admin:$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/_supabase
+            - name: SECRET_KEY_BASE
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.secret.jwt.secretRef }}
@@ -119,64 +111,77 @@ spec:
                   name: {{ include "supabase.secret.jwt" . }}
                   key: secret
                   {{- end }}
-            - name: GOTRUE_SMTP_USER
+            - name: API_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.smtp.secretRef }}
-                  name: {{ .Values.secret.smtp.secretRef }}
-                  key: {{ .Values.secret.smtp.secretRefKey.username | default "username" }}
+                  {{- if .Values.secret.jwt.secretRef }}
+                  name: {{ .Values.secret.jwt.secretRef }}
+                  key: {{ .Values.secret.jwt.secretRefKey.secret | default "secret" }}
                   {{- else }}
-                  name: {{ include "supabase.secret.smtp" . }}
-                  key: username
+                  name: {{ include "supabase.secret.jwt" . }}
+                  key: secret
                   {{- end }}
-            - name: GOTRUE_SMTP_PASS
+            - name: METRICS_JWT_SECRET
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.smtp.secretRef }}
-                  name: {{ .Values.secret.smtp.secretRef }}
-                  key: {{ .Values.secret.smtp.secretRefKey.password | default "password" }}
+                  {{- if .Values.secret.jwt.secretRef }}
+                  name: {{ .Values.secret.jwt.secretRef }}
+                  key: {{ .Values.secret.jwt.secretRefKey.secret | default "secret" }}
                   {{- else }}
-                  name: {{ include "supabase.secret.smtp" . }}
-                  key: password
+                  name: {{ include "supabase.secret.jwt" . }}
+                  key: secret
                   {{- end }}
-          {{- with .Values.auth.envFrom }}
-          envFrom:
-            {{- toYaml . | nindent 12 }}
-          {{- end }}
-          {{- with .Values.auth.livenessProbe }}
+            - name: VAULT_ENC_KEY
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.secret.jwt.secretRef }}
+                  name: {{ .Values.secret.jwt.secretRef }}
+                  key: {{ .Values.secret.jwt.secretRefKey.secret | default "secret" }}
+                  {{- else }}
+                  name: {{ include "supabase.secret.jwt" . }}
+                  key: secret
+                  {{- end }}
+          {{- with .Values.supavisor.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.auth.readinessProbe }}
+          {{- with .Values.supavisor.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
           ports:
-            - name: http
-              containerPort: 9999
+            - name: postgres
+              containerPort: 5432
               protocol: TCP
-          {{- with .Values.auth.resources }}
+            - name: proxy
+              containerPort: 6543
+              protocol: TCP
+            - name: metrics
+              containerPort: 4000
+              protocol: TCP
+          {{- with .Values.supavisor.resources }}
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.auth.volumeMounts }}
+          {{- with .Values.supavisor.volumeMounts }}
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.auth.volumes }}
+      {{- with .Values.supavisor.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.nodeSelector }}
+      {{- with .Values.supavisor.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.affinity }}
+      {{- with .Values.supavisor.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.auth.tolerations }}
+      {{- with .Values.supavisor.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
 {{- end }}
+

@@ -3,6 +3,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ include "supabase.db.fullname" . }}
+  namespace: {{ include "supabase.namespace" . }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
 spec:
