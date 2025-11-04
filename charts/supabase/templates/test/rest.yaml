@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "supabase.fullname" . }}-test-rest
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
   annotations:
@@ -20,7 +21,9 @@ spec:
             - -c
             - |
               curl -sfo /dev/null \
-                http://{{ include "supabase.rest.fullname" . }}:{{ .Values.rest.service.port }}
+                http://{{ include "supabase.rest.fullname" . }}:{{ .Values.rest.service.port }} \
+                  || { echo -e "\033[31mFailed to connect to the {{ include "supabase.rest.fullname" . }}.\033[0m"; exit 1; }
+
               echo "Sevice {{ include "supabase.rest.fullname" . }} is healthy."
       restartPolicy: Never
 {{- end }}

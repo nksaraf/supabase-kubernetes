@@ -6,6 +6,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
+  {{- with .Values.realtime.deployment.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   {{- if not .Values.realtime.autoscaling.enabled }}
   replicas: {{ .Values.realtime.replicaCount }}
@@ -30,36 +34,7 @@ spec:
       securityContext:
         {{- toYaml .Values.realtime.podSecurityContext | nindent 8 }}
       initContainers:
-        - name: init-db
-          image: postgres:15-alpine
-          imagePullPolicy: IfNotPresent
-          env:
-            - name: DB_HOST
-              {{- if .Values.db.enabled }}
-              value: {{ include "supabase.db.fullname" . | quote }}
-              {{- else }}
-              value: {{ .Values.auth.environment.DB_HOST | quote }}
-              {{- end }}
-            - name: DB_USER
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.username | default "username" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: username
-                  {{- end }}
-            - name: DB_PORT
-              value: {{ .Values.analytics.environment.DB_PORT | quote }}
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              until pg_isready -h $(DB_HOST) -p $(DB_PORT) -U $(DB_USER); do
-              echo "Waiting for database to start..."
-              sleep 2
-              done
-            - echo "Database is ready"
+        {{- include "supabase.waitForDB" . | nindent 8 }}
       containers:
         - name: {{ include "supabase.realtime.name" $ }}
           securityContext:
@@ -73,29 +48,41 @@ spec:
             - name: {{ $key }}
               value: {{ $value | quote }}
             {{- end }}
-            {{- if .Values.db.enabled }}
+            - name: TENANT_NAME
+              value: {{ include "supabase.realtime.fullname" . }}
             - name: DB_HOST
-              value: {{ include "supabase.db.fullname" . }}
-            {{- end }}
+              value: {{ include "supabase.database.host" . | quote }}
+            - name: DB_PORT
+              value: {{ include "supabase.database.port" . | quote }}
+            - name: DB_SSL_MODE
+              value: {{ include "supabase.database.sslmode" . | quote }}
+            - name: DB_USER
+              value: {{ include "supabase.database.supabase_username" . | quote }}
             - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.password | default "password" }}
-                  {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: password
-                  {{- end }}
+              {{- include "supabase.database.password" . | nindent 14 }}
             - name: DB_NAME
+              value: {{ include "supabase.database.db_name" . | quote }}
+            - name: DB_AFTER_CONNECT_QUERY
+              value: {{ printf "SET search_path TO %s" (include "supabase.database.realtime_db_name" .) }}
+            - name: DB_ENC_KEY
               valueFrom:
                 secretKeyRef:
-                  {{- if .Values.secret.db.secretRef }}
-                  name: {{ .Values.secret.db.secretRef }}
-                  key: {{ .Values.secret.db.secretRefKey.database | default "database" }}
+                  {{- if .Values.secret.realtime.secretRef }}
+                  name: {{ .Values.secret.realtime.secretRef }}
+                  key: {{ .Values.secret.realtime.secretRefKey.dbEncKey | default "dbEncKey" }}
                   {{- else }}
-                  name: {{ include "supabase.secret.db" . }}
-                  key: database
+                  name: {{ include "supabase.secret.realtime" . }}
+                  key: dbEncKey
+                  {{- end }}
+            - name: SECRET_KEY_BASE
+              valueFrom:
+                secretKeyRef:
+                  {{- if .Values.secret.realtime.secretRef }}
+                  name: {{ .Values.secret.realtime.secretRef }}
+                  key: {{ .Values.secret.realtime.secretRefKey.secretKeyBase | default "secretKeyBase" }}
+                  {{- else }}
+                  name: {{ include "supabase.secret.realtime" . }}
+                  key: secretKeyBase
                   {{- end }}
             - name: JWT_SECRET
               valueFrom:
@@ -108,14 +95,16 @@ spec:
                   key: secret
                   {{- end }}
             - name: API_JWT_SECRET
+              value: $(JWT_SECRET)
+            - name: ANON_KEY
               valueFrom:
                 secretKeyRef:
                   {{- if .Values.secret.jwt.secretRef }}
                   name: {{ .Values.secret.jwt.secretRef }}
-                  key: {{ .Values.secret.jwt.secretRefKey.secret | default "secret" }}
+                  key: {{ .Values.secret.jwt.secretRefKey.anonKey | default "anonKey" }}
                   {{- else }}
                   name: {{ include "supabase.secret.jwt" . }}
-                  key: secret
+                  key: anonKey
                   {{- end }}
           {{- with .Values.realtime.livenessProbe }}
           livenessProbe:
@@ -133,14 +122,20 @@ spec:
           resources:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.realtime.volumeMounts }}
           volumeMounts:
+          {{- with .Values.realtime.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.realtime.volumes }}
+            - name: realtime-seed-volume
+              mountPath: /app/lib/realtime-{{ .Values.realtime.image.tag | trimPrefix "v" }}/priv/repo/seeds.exs
+              subPath: seeds.exs
       volumes:
+      {{- with .Values.realtime.volumes }}
         {{- toYaml . | nindent 8 }}
       {{- end }}
+        - name: realtime-seed-volume
+          configMap:
+            name: {{ printf "%s-seeds" (include "supabase.realtime.fullname" .) }}
       {{- with .Values.realtime.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

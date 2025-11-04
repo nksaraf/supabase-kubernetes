@@ -6,6 +6,10 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
+  {{- with .Values.kong.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.kong.service.type }}
   ports:
@@ -13,7 +17,6 @@ spec:
       targetPort: 8000
       protocol: TCP
       name: http
-  
   selector:
     {{- include "supabase.kong.selectorLabels" . | nindent 4 }}
 {{- end }}

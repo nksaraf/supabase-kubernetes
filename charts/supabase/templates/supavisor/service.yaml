@@ -6,22 +6,21 @@ metadata:
   namespace: {{ .Release.Namespace }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
+  {{- with .Values.supavisor.service.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
 spec:
   type: {{ .Values.supavisor.service.type }}
   ports:
+    - port: {{ include "supabase.database.port" . | int }}
+      targetPort: 5432
+      protocol: TCP
+      name: postgresql
     - port: {{ .Values.supavisor.service.port }}
-      targetPort: postgres
+      targetPort: 6543
       protocol: TCP
-      name: postgres
-    - port: {{ .Values.supavisor.proxyPort }}
-      targetPort: proxy
-      protocol: TCP
-      name: proxy
-    - port: 4000
-      targetPort: metrics
-      protocol: TCP
-      name: metrics
+      name: pooler
   selector:
     {{- include "supabase.supavisor.selectorLabels" . | nindent 4 }}
 {{- end }}
-

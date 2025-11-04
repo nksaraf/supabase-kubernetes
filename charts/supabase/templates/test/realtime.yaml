@@ -3,6 +3,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: {{ include "supabase.fullname" . }}-test-realtime
+  namespace: {{ .Release.Namespace }}
   labels:
     {{- include "supabase.labels" . | nindent 4 }}
   annotations:
@@ -20,7 +21,9 @@ spec:
             - -c
             - |
               curl -sfo /dev/null \
-                http://{{ include "supabase.realtime.fullname" . }}:{{ .Values.realtime.service.port }}
+                http://{{ include "supabase.realtime.fullname" . }}:{{ .Values.realtime.service.port }} \
+                  || { echo -e "\033[31mFailed to connect to the {{ include "supabase.realtime.fullname" . }}.\033[0m"; exit 1; }
+
               echo "Sevice {{ include "supabase.realtime.fullname" . }} is healthy."
       restartPolicy: Never
 {{- end }}

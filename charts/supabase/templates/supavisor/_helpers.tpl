@@ -41,4 +41,3 @@ Create the name of the service account to use
 {{- default "default" .Values.supavisor.serviceAccount.name }}
 {{- end }}
 {{- end }}
-

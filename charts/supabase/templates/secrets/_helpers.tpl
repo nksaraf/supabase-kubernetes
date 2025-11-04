@@ -6,6 +6,13 @@ Expand the name of the JWT secret.
 {{- end -}}
 
 {{/*
+Expand the name of the pooler secret.
+*/}}
+{{- define "supabase.secret.pooler" -}}
+{{- printf "%s-pooler" (include "supabase.fullname" .) }}
+{{- end -}}
+
+{{/*
 Expand the name of the SMTP secret.
 */}}
 {{- define "supabase.secret.smtp" -}}
@@ -54,4 +61,11 @@ Check if both s3 keys are valid
 {{- else -}}
 {{- printf "false" -}}
 {{- end -}}
+{{- end -}}
+
+{{/*
+Expand the name of the realtime secret.
+*/}}
+{{- define "supabase.secret.realtime" -}}
+{{- printf "%s-realtime" (include "supabase.fullname" .) }}
 {{- end -}}

@@ -15,10 +15,10 @@ data:
     echo "Replacing env placeholders of /usr/local/kong/kong.yml"
 
     sed \
-    -e "s/\${SUPABASE_ANON_KEY}/${SUPABASE_ANON_KEY}/" \
-    -e "s/\${SUPABASE_SERVICE_KEY}/${SUPABASE_SERVICE_KEY}/" \
-    -e "s/\${DASHBOARD_USERNAME}/${DASHBOARD_USERNAME}/" \
-    -e "s/\${DASHBOARD_PASSWORD}/${DASHBOARD_PASSWORD}/" \
+    -e "s|\${SUPABASE_ANON_KEY}|${SUPABASE_ANON_KEY}|" \
+    -e "s|\${SUPABASE_SERVICE_KEY}|${SUPABASE_SERVICE_KEY}|" \
+    -e "s|\${DASHBOARD_USERNAME}|${DASHBOARD_USERNAME}|" \
+    -e "s|\${DASHBOARD_PASSWORD}|${DASHBOARD_PASSWORD}|" \
     /usr/local/kong/template.yml \
     > /usr/local/kong/kong.yml
 
@@ -178,7 +178,7 @@ data:
     {{- if .Values.functions.enabled }}
       - name: functions-v1
         _comment: 'Edge Functions: /functions/v1/* -> http://{{ include "supabase.functions.fullname" . }}:{{ .Values.functions.service.port }}/*'
-        url: http://functions:{{ .Values.functions.service.port }}/
+        url: http://{{ include "supabase.functions.fullname" . }}:{{ .Values.functions.service.port }}/
         routes:
           - name: functions-v1-all
             strip_path: true
