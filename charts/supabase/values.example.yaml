@@ -12,16 +12,18 @@ secret:
   db:
     password: example123456
   pooler:
-    vaultEncKey: your-super-secret-and-long-vault-enc-key
+    vaultEncKey: your-encryption-key-32-chars-min
   realtime:
-    dbEncKey: your-super-secret-and-long-db-enc-key
-    secretKeyBase: your-super-secret-and-long-secret-key-base
+    dbEncKey: supabaserealtime
+    secretKeyBase: UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq
   s3:
     keyId: your-s3-key-id
     accessKey: your-s3-access-key
   analytics:
     privateApiKey: your-super-secret-and-long-private-logflare-key
     publicApiKey: your-super-secret-and-long-public-logflare-key
+  meta:
+    cryptoKey: your-encryption-key-32-chars-min
 
 init_db:
   image:
@@ -95,7 +97,7 @@ kong:
     className: traefik
     annotations:
       cert-manager.io/cluster-issuer: letsencrypt-dns01
-    tls: 
+    tls:
       - secretName: example-ingress-tls
         hosts:
           - supabase.kube.rio.software
@@ -104,7 +106,6 @@ kong:
         paths:
           - path: /
             pathType: Prefix
-
 
 vector:
   # livenessProbe:
