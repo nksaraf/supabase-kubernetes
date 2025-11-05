@@ -43,8 +43,6 @@ db:
     enabled: false
 
 studio:
-  image:
-    tag: 2025.10.27-sha-85b84e0
   environment:
     DEFAULT_ORGANIZATION_NAME: "My Organization"
     DEFAULT_PROJECT_NAME: "My Project"
@@ -74,7 +72,7 @@ realtime:
 
 meta:
   image:
-    tag: v0.93.1
+    tag: v0.91.5
 
 storage:
   image:
@@ -83,42 +81,32 @@ storage:
     enabled: false
 
 imgproxy:
-  image:
-    tag: v3.8.0
   environment:
     IMGPROXY_ENABLE_WEBP_DETECTION: "true"
   persistence:
     enabled: false
 
 kong:
-  image:
-    tag: "3.9.1"
   environment:
     KONG_DECLARATIVE_CONFIG: /usr/local/kong/kong.yml
     KONG_LOG_LEVEL: info
   ingress:
     enabled: true
-    className: "nginx"
+    className: traefik
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
-    tls:
-      []
-      # - secretName: example-ingress-tls
-      #   hosts:
-      #     - supabase.kube.rio.software
+      cert-manager.io/cluster-issuer: letsencrypt-dns01
+    tls: 
+      - secretName: example-ingress-tls
+        hosts:
+          - supabase.kube.rio.software
     hosts:
       - host: supabase.kube.rio.software
         paths:
           - path: /
             pathType: Prefix
 
-analytics:
-  image:
-    tag: 1.22.6
 
 vector:
-  image:
-    tag: "0.49.0-alpine"
   # livenessProbe:
   #   httpGet:
   #     path: /health
@@ -134,7 +122,3 @@ vector:
     - name: pod-logs
       hostPath:
         path: /var/log/pods
-
-functions:
-  image:
-    tag: v1.69.15
