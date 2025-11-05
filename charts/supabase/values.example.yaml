@@ -32,8 +32,6 @@ init_db:
 
 db:
   enabled: true
-  image:
-    tag: "17.4.1.078"
   livenessProbe:
     exec:
       command:
@@ -52,8 +50,6 @@ studio:
     NEXT_PUBLIC_ENABLE_LOGS: "true"
 
 auth:
-  image:
-    tag: v2.180.0
   environment:
     API_EXTERNAL_URL: https://supabase.kube.rio.software
     GOTRUE_SITE_URL: https://supabase.kube.rio.software
@@ -64,21 +60,7 @@ auth:
     GOTRUE_SMTP_PORT: "587"
     GOTRUE_SMTP_SENDER_NAME: "your-mail@supabase.kube.rio.software"
 
-rest:
-  image:
-    tag: v13.0.7
-
-realtime:
-  image:
-    tag: v2.57.2
-
-meta:
-  image:
-    tag: v0.91.5
-
 storage:
-  image:
-    tag: v1.28.2
   persistence:
     enabled: false
 
