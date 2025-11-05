@@ -4,7 +4,7 @@ secret:
     serviceKey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q
     secret: your-super-secret-jwt-token-with-at-least-32-characters-long
   smtp:
-    username: your-mail@example.com
+    username: your-mail@supabase.kube.rio.software
     password: example123456
   dashboard:
     username: supabase
@@ -48,21 +48,21 @@ studio:
   environment:
     DEFAULT_ORGANIZATION_NAME: "My Organization"
     DEFAULT_PROJECT_NAME: "My Project"
-    SUPABASE_PUBLIC_URL: http://example.com/
+    SUPABASE_PUBLIC_URL: https://supabase.kube.rio.software/
     NEXT_PUBLIC_ENABLE_LOGS: "true"
 
 auth:
   image:
     tag: v2.180.0
   environment:
-    API_EXTERNAL_URL: http://example.com
-    GOTRUE_SITE_URL: http://example.com
+    API_EXTERNAL_URL: https://supabase.kube.rio.software
+    GOTRUE_SITE_URL: https://supabase.kube.rio.software
     GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
     GOTRUE_MAILER_AUTOCONFIRM: "true"
-    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@example.com"
-    GOTRUE_SMTP_HOST: "smtp.example.com"
+    GOTRUE_SMTP_ADMIN_EMAIL: "your-mail@supabase.kube.rio.software"
+    GOTRUE_SMTP_HOST: "smtp.supabase.kube.rio.software"
     GOTRUE_SMTP_PORT: "587"
-    GOTRUE_SMTP_SENDER_NAME: "your-mail@example.com"
+    GOTRUE_SMTP_SENDER_NAME: "your-mail@supabase.kube.rio.software"
 
 rest:
   image:
@@ -105,9 +105,9 @@ kong:
       []
       # - secretName: example-ingress-tls
       #   hosts:
-      #     - example.com
+      #     - supabase.kube.rio.software
     hosts:
-      - host: example.com
+      - host: supabase.kube.rio.software
         paths:
           - path: /
             pathType: Prefix
