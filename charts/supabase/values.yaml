@@ -989,7 +989,7 @@ analytics:
   image:
     repository: supabase/logflare
     pullPolicy: IfNotPresent
-    tag: "1.20.1"
+    tag: "1.15.3"
   imagePullSecrets: []
   replicaCount: 1
   nameOverride: ""
