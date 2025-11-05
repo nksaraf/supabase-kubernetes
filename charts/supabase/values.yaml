@@ -26,9 +26,9 @@ secret:
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # anonKey: anonKey
-      # serviceKey: serviceKey
-      # secret: secret
+    # anonKey: anonKey
+    # serviceKey: serviceKey
+    # secret: secret
   # database admin user credentials
   # these fields must be provided even if using external database
   db:
@@ -36,7 +36,7 @@ secret:
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # password: password
+    # password: password
   # analytics Logflare API key
   analytics:
     # these cannot be the same value
@@ -46,8 +46,8 @@ secret:
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # privateApiKey: privateApiKey
-      # publicApiKey: publicApiKey
+    # privateApiKey: privateApiKey
+    # publicApiKey: publicApiKey
   # smtp will be used to reference secret including smtp credentials
   smtp:
     username: ""
@@ -56,8 +56,8 @@ secret:
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # username: username
-      # password: password
+    # username: username
+    # password: password
   # secret used to access the studio dashboard
   # leave it empty to disable dashboard authentication
   dashboard:
@@ -67,8 +67,8 @@ secret:
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # username: username
-      # password: password
+    # username: username
+    # password: password
   # S3 credentials for storage object bucket
   s3:
     keyId: ""
@@ -77,22 +77,22 @@ secret:
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # keyId: keyId
-      # accessKey: accessKey
+    # keyId: keyId
+    # accessKey: accessKey
   pooler:
     vaultEncKey: ""
     # secretRef: ""
     # override secret keys for existing secret refs
     # secretRefKey:
-      # vaultEncKey: vaultEncKey
+    # vaultEncKey: vaultEncKey
   realtime:
     dbEncKey: ""
     secretKeyBase: ""
     # override secret keys for existing secret refs
     # secretRef: ""
     # secretRefKey:
-      # dbEncKey: dbEncKey
-      # secretKeyBase: secretKeyBase
+    # dbEncKey: dbEncKey
+    # secretKeyBase: secretKeyBase
   meta:
     cryptoKey: ""
 
@@ -112,7 +112,7 @@ external_db:
   # secretRef: ""
   # override secret keys for existing secret refs
   # secretRefKey:
-    # password: password
+  # password: password
 
 init_db:
   image:
@@ -147,9 +147,11 @@ db:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -182,7 +184,8 @@ db:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -246,9 +249,11 @@ studio:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -268,7 +273,7 @@ studio:
     SUPABASE_PUBLIC_URL: http://example.com
     NEXT_PUBLIC_ENABLE_LOGS: "true"
     # Set value to bigquery to use Big Query backend for analytics
-    NEXT_ANALYTICS_BACKEND_PROVIDER: postgres  # postgres, bigquery
+    NEXT_ANALYTICS_BACKEND_PROVIDER: postgres # postgres, bigquery
   # volumeMounts:
   #   - name: volume_name
   #     mountPath: /path/to/my/secret
@@ -280,7 +285,8 @@ studio:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -334,9 +340,11 @@ auth:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -374,7 +382,8 @@ auth:
     GOTRUE_MAILER_URLPATHS_CONFIRMATION: "/auth/v1/verify"
     GOTRUE_MAILER_URLPATHS_RECOVERY: "/auth/v1/verify"
     GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: "/auth/v1/verify"
-  envFrom: []
+  envFrom:
+    []
     # - secretRef:
     #     name: env-secret
   # volumeMounts:
@@ -388,7 +397,8 @@ auth:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -431,9 +441,11 @@ rest:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -462,7 +474,8 @@ rest:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -497,27 +510,27 @@ realtime:
   livenessProbe:
     exec:
       command:
-      - curl
-      - -sSfL
-      - --head
-      - -o
-      - /dev/null
-      - -H
-      - "Authorization: Bearer ${ANON_KEY}"
-      - http://localhost:4000/api/tenants/realtime-dev/health
+        - curl
+        - -sSfL
+        - --head
+        - -o
+        - /dev/null
+        - -H
+        - "Authorization: Bearer ${ANON_KEY}"
+        - http://localhost:4000/api/tenants/realtime-dev/health
     initialDelaySeconds: 5
     periodSeconds: 5
   readinessProbe:
     exec:
       command:
-      - curl
-      - -sSfL
-      - --head
-      - -o
-      - /dev/null
-      - -H
-      - "Authorization: Bearer ${ANON_KEY}"
-      - http://localhost:4000/api/tenants/realtime-dev/health
+        - curl
+        - -sSfL
+        - --head
+        - -o
+        - /dev/null
+        - -H
+        - "Authorization: Bearer ${ANON_KEY}"
+        - http://localhost:4000/api/tenants/realtime-dev/health
     initialDelaySeconds: 5
     periodSeconds: 5
   serviceAccount:
@@ -529,9 +542,11 @@ realtime:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -548,6 +563,7 @@ realtime:
     PORT: "4000"
     FLY_ALLOC_ID: fly123
     FLY_APP_NAME: realtime
+    APP_NAME: realtime
     ERL_AFLAGS: -proto_dist inet_tcp
     ENABLE_TAILSCALE: "false"
     DNS_NODES: "''"
@@ -563,7 +579,8 @@ realtime:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -607,9 +624,11 @@ meta:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -635,7 +654,8 @@ meta:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -689,9 +709,11 @@ storage:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -705,10 +727,10 @@ storage:
     type: ClusterIP
     port: 5000
   environment:
-    DB_SSL: disable  # disable, allow, prefer, require, verify-ca, verify-full
+    DB_SSL: disable # disable, allow, prefer, require, verify-ca, verify-full
     PGOPTIONS: -c search_path=storage,public
     FILE_SIZE_LIMIT: "52428800"
-    STORAGE_BACKEND: file  # file, s3
+    STORAGE_BACKEND: file # file, s3
     FILE_STORAGE_BACKEND_PATH: /var/lib/storage
     TENANT_ID: stub
     REGION: stub
@@ -730,7 +752,8 @@ storage:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -774,15 +797,15 @@ imgproxy:
   livenessProbe:
     exec:
       command:
-      - imgproxy
-      - health
+        - imgproxy
+        - health
     initialDelaySeconds: 5
     periodSeconds: 5
   readinessProbe:
     exec:
       command:
-      - imgproxy
-      - health
+        - imgproxy
+        - health
     initialDelaySeconds: 5
     periodSeconds: 5
   serviceAccount:
@@ -794,9 +817,11 @@ imgproxy:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -825,7 +850,8 @@ imgproxy:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -877,9 +903,11 @@ kong:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -908,7 +936,8 @@ kong:
       nginx.ingress.kubernetes.io/rewrite-target: /
       # cert-manager.io/cluster-issuer: "letsencrypt-staging"
       # kubernetes.io/tls-acme: "true"
-    tls: []
+    tls:
+      []
       # Define TLS secret for SSL termination.
       # This section can be left blank if using cluster certificate manager.
       # Otherwise, setting this in tandem with certificate manager will overwrite the secret name.
@@ -931,7 +960,8 @@ kong:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -985,9 +1015,11 @@ analytics:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -1004,7 +1036,7 @@ analytics:
     LOGFLARE_NODE_HOST: 127.0.0.1
     LOGFLARE_SINGLE_TENANT: "true"
     LOGFLARE_SUPABASE_MODE: "true"
-    FEATURE_FLAG_OVERRIDE: multibackend=true
+    LOGFLARE_FEATURE_FLAG_OVERRIDE: multibackend=true
     LOGFLARE_MIN_CLUSTER_SIZE: 1
   # Enable Big Query backend for analytics
   bigQuery:
@@ -1023,7 +1055,8 @@ analytics:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -1077,9 +1110,11 @@ vector:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -1103,7 +1138,8 @@ vector:
   #       items:
   #       - key: my_secret.txt
   #         path: name_of_file_in_container.txt
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -1147,9 +1183,11 @@ functions:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -1176,7 +1214,8 @@ functions:
   #       items:
   #       - key: my_secret.ts
   #         path: name_of_file_in_container.ts
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -1230,9 +1269,11 @@ supavisor:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -1255,7 +1296,8 @@ supavisor:
     POOLER_MAX_CLIENT_CONN: 100
     POOLER_POOL_MODE: transaction
     DB_POOL_SIZE: 5
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
@@ -1298,9 +1340,11 @@ minio:
     # If not set and create is true, a name is generated using the fullname template
     name: ""
   podAnnotations: {}
-  podSecurityContext: {}
+  podSecurityContext:
+    {}
     # fsGroup: 2000
-  securityContext: {}
+  securityContext:
+    {}
     # capabilities:
     #   drop:
     #   - ALL
@@ -1326,7 +1370,8 @@ minio:
   #       items:
   #       - key: my_secret.ts
   #         path: name_of_file_in_container.ts
-  resources: {}
+  resources:
+    {}
     # We usually recommend not to specify default resources and to leave this as a conscious
     # choice for the user. This also increases chances charts run on environments with little
     # resources, such as Minikube. If you do want to specify resources, uncomment the following
