@@ -71,11 +71,6 @@ rest:
 realtime:
   image:
     tag: v2.57.2
-  livenessProbe:
-    httpGet:
-      path: /
-      port: 4000
-    initialDelaySeconds: 3
 
 meta:
   image:
@@ -84,11 +79,6 @@ meta:
 storage:
   image:
     tag: v1.28.2
-  livenessProbe:
-    httpGet:
-      path: /status
-      port: 5000
-    initialDelaySeconds: 3
   persistence:
     enabled: false
 
@@ -97,12 +87,6 @@ imgproxy:
     tag: v3.8.0
   environment:
     IMGPROXY_ENABLE_WEBP_DETECTION: "true"
-  livenessProbe:
-    exec:
-      command:
-        - imgproxy
-        - health
-    initialDelaySeconds: 3
   persistence:
     enabled: false
 
@@ -135,11 +119,11 @@ analytics:
 vector:
   image:
     tag: "0.49.0-alpine"
-  livenessProbe:
-    httpGet:
-      path: /health
-      port: 9001
-    initialDelaySeconds: 3
+  # livenessProbe:
+  #   httpGet:
+  #     path: /health
+  #     port: 9001
+  #   initialDelaySeconds: 3
   ## Vector requires logs from the control plane to function.
   ## This is normally stored in /var/log/pods
   ## Modify these values according to your environment.
