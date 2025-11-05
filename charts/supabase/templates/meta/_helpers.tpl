@@ -5,6 +5,14 @@ Expand the name of the chart.
 {{- default (print .Chart.Name "-meta") .Values.meta.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
 
+
+{{/*
+Expand the name of the analytics secret.
+*/}}
+{{- define "supabase.secret.meta" -}}
+{{- printf "%s-meta" (include "supabase.fullname" .) }}
+{{- end -}}
+
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
