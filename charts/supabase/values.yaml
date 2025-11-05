@@ -93,6 +93,8 @@ secret:
     # secretRefKey:
       # dbEncKey: dbEncKey
       # secretKeyBase: secretKeyBase
+  meta:
+    cryptoKey: ""
 
 external_db:
   # Override the database hostname if using external database
