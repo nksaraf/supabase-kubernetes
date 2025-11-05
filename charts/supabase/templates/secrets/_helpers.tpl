@@ -69,3 +69,11 @@ Expand the name of the realtime secret.
 {{- define "supabase.secret.realtime" -}}
 {{- printf "%s-realtime" (include "supabase.fullname" .) }}
 {{- end -}}
+
+
+{{/*
+Expand the name of the realtime secret.
+*/}}
+{{- define "supabase.secret.meta" -}}
+{{- printf "%s-meta" (include "supabase.fullname" .) }}
+{{- end -}}
